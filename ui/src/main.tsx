@@ -8,22 +8,25 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
+  lazyRouteComponent,
   redirect,
 } from '@tanstack/react-router'
 import './index.css'
 import { getSession } from './lib/api'
 import { I18nProvider } from './lib/i18n'
 import { WorkspaceProvider } from './lib/workspace'
+import { Spinner } from './components/ui'
+// Shell + the landing routes stay in the entry chunk so the first paint
+// needs no extra request; every other screen is split into its own chunk
+// and fetched on navigation, which keeps the initial download small.
 import { Shell } from './components/Shell'
 import { LoginPage } from './routes/LoginPage'
 import { DashboardPage } from './routes/DashboardPage'
-import { SpecPage } from './routes/SpecPage'
-import { RunPage } from './routes/RunPage'
-import { MatrixPage } from './routes/MatrixPage'
-import { PlansPage } from './routes/PlansPage'
-import { ReportsPage } from './routes/ReportsPage'
-import { RequirementsPage } from './routes/RequirementsPage'
-import { AdminPage } from './routes/AdminPage'
+
+const lazyPage = (
+  load: () => Promise<Record<string, unknown>>,
+  name: string,
+) => lazyRouteComponent(load, name)
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -57,7 +60,7 @@ const dashboardRoute = createRoute({
 const specRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: '/spec',
-  component: SpecPage,
+  component: lazyPage(() => import('./routes/SpecPage'), 'SpecPage'),
   validateSearch: (search: Record<string, unknown>) => ({
     // accept both "20117" (router-serialized) and bare 3 (hand-written)
     caseId:
@@ -70,37 +73,40 @@ const specRoute = createRoute({
 const runRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: '/run',
-  component: RunPage,
+  component: lazyPage(() => import('./routes/RunPage'), 'RunPage'),
 })
 
 const matrixRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: '/matrix',
-  component: MatrixPage,
+  component: lazyPage(() => import('./routes/MatrixPage'), 'MatrixPage'),
 })
 
 const plansRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: '/plans',
-  component: PlansPage,
+  component: lazyPage(() => import('./routes/PlansPage'), 'PlansPage'),
 })
 
 const reportsRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: '/reports',
-  component: ReportsPage,
+  component: lazyPage(() => import('./routes/ReportsPage'), 'ReportsPage'),
 })
 
 const requirementsRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: '/requirements',
-  component: RequirementsPage,
+  component: lazyPage(
+    () => import('./routes/RequirementsPage'),
+    'RequirementsPage',
+  ),
 })
 
 const adminRoute = createRoute({
   getParentRoute: () => shellRoute,
   path: '/admin',
-  component: AdminPage,
+  component: lazyPage(() => import('./routes/AdminPage'), 'AdminPage'),
 })
 
 const routeTree = rootRoute.addChildren([
@@ -120,6 +126,11 @@ const routeTree = rootRoute.addChildren([
 const router = createRouter({
   routeTree,
   history: createHashHistory(),
+  defaultPendingComponent: () => (
+    <div className="grid place-items-center py-20">
+      <Spinner />
+    </div>
+  ),
 })
 
 declare module '@tanstack/react-router' {

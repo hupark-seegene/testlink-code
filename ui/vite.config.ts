@@ -3,9 +3,11 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 // SPA for TestLink. In dev, /lib/api/* is proxied to the PHP server.
-// The production build is served by the same PHP server from /ui/dist/.
+// The production build is served from /ui/dist/. An absolute base (rather
+// than './') lets the same index.html be served at the site root without a
+// redirect — asset URLs stay correct no matter which path serves the HTML.
 export default defineConfig({
-  base: './',
+  base: '/ui/dist/',
   plugins: [react(), tailwindcss()],
   server: {
     port: 5173,

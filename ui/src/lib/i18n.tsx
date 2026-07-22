@@ -58,6 +58,7 @@ const en = {
   signIn: 'Sign in',
   signingIn: 'Signing in…',
   signInFailed: 'Sign-in failed',
+  wrongCredentials: 'Wrong login or password',
 
   // dashboard
   linkedCasesCount: (n: string) => `${n} linked test cases`,
@@ -316,6 +317,7 @@ const ko: Messages = {
   signIn: '로그인',
   signingIn: '로그인 중…',
   signInFailed: '로그인에 실패했습니다',
+  wrongCredentials: '아이디 또는 비밀번호가 올바르지 않습니다',
 
   linkedCasesCount: (n) => `연결된 테스트 케이스 ${n}개`,
   passRateLabel: '최근 실행 성공률',
@@ -549,6 +551,7 @@ const vi: Messages = {
   signIn: 'Đăng nhập',
   signingIn: 'Đang đăng nhập…',
   signInFailed: 'Đăng nhập thất bại',
+  wrongCredentials: 'Sai tên đăng nhập hoặc mật khẩu',
 
   linkedCasesCount: (n) => `${n} trường hợp kiểm thử được liên kết`,
   passRateLabel: 'tỷ lệ đạt',

@@ -274,7 +274,9 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ login, password }),
     }).then(async (r) => {
-      if (!r.ok) throw new Error('Wrong login or password')
+      // sentinel code, not a display string — the view layer maps it to a
+      // localized message (see LoginPage's use of t('wrongCredentials'))
+      if (!r.ok) throw new Error('invalid_credentials')
       return r.json() as Promise<{ apikey: string; user: User }>
     }),
 

@@ -21,7 +21,9 @@ export function LoginPage() {
       setSession({ apikey: r.apikey, user: r.user })
       navigate({ to: '/' })
     } catch (err) {
-      setError(err instanceof Error ? err.message : t('signInFailed'))
+      const isWrongCredentials =
+        err instanceof Error && err.message === 'invalid_credentials'
+      setError(isWrongCredentials ? t('wrongCredentials') : t('signInFailed'))
     } finally {
       setBusy(false)
     }
